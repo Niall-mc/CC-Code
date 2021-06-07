@@ -3,20 +3,20 @@ local ender = peripheral.find("enderstorage:ender_chest")
 local controllers = table.pack(peripheral.find("storagedrawers:controller"))
 local chests = table.pack(peripheral.find("ironchest:obsidian_chest"))
 
-local mekanismLocation = peripheral.getName(chests[1])
-local mekanismFilter = "mekanism"
+local magicLocation = peripheral.getName(chests[1])
+local magicFilter = "nouveau, astral, eidolon"
 
 local immersiveLocation = peripheral.getName(chests[2])
 local immersiveFilter = {"immersive", "tetra"}
 
 local someMachinesLocation = peripheral.getName(chests[3])
-local machineFilter = {"foregoing", "computercraft", "enderstorage", "fluxnetworks"}
+local machineFilter = {"foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism"}
 
 local organicsLocation = peripheral.getName(chests[4])
 local organicItemsFilter = {"petal", "dye", "flower", "mushroom", "head", "tear", "shell", "kelp", "bat_wing",
                             "weed", "clover", "brush", "allium", "bush", "seed", "orchid",
                             "skull", "alex", "web", "raw"}
-                            
+                
 local woodItemsLocation = peripheral.getName(chests[5])
 local woodItemsFilter = {
     "scaffold", "minecraft:chest", "sign", "fence", "crafting_table",
@@ -29,7 +29,7 @@ local forbiddenArtifactsLocation = peripheral.getName(chests[7])
 local forbiddenArtifactsFilter = {"forbidden", "artifacts"}
 
 local locationsMap = {
-    [mekanismLocation] = mekanismFilter,
+    [magicLocation] = magicFilter,
     [immersiveLocation] = immersiveFilter,
     [someMachinesLocation] = machineFilter,
     [potionsLocation] = potionsFilter,
