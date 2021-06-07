@@ -1,46 +1,46 @@
 local tArgs = {...}
-forward = tonumber(tArgs[1])
-across = tonumber(tArgs[2])
+local forward = tonumber(tArgs[1])
+local across = tonumber(tArgs[2])
 
-actualDown = tonumber(tArgs[3])
-remainder = actualDown % 3
-down = math.ceil(actualDown / 3)
+local actualDown = tonumber(tArgs[3])
+local remainder = actualDown % 3
+local down = math.ceil(actualDown / 3)
 
-direction = tArgs[4]
+local direction = tArgs[4]
 
-function dig()
+local function dig()
   while turtle.detect() do
       turtle.dig()
   end
 end
 
-function digDown()
+local function digDown()
   if turtle.detectDown() then
     turtle.digDown()
   end
 end
 
-function digUp()
+local function digUp()
   while turtle.detectUp() do 
     turtle.digUp()
   end
 end
 
-function move()
+local function move()
   while not turtle.forward() do
     turtle.attack()
     turtle.dig()
   end
 end
 
-function moveDown(amount)
+local function moveDown(amount)
   for i = 1, amount do
     digDown()
     turtle.down()
   end
 end
 
-function changeDirection()
+local function changeDirection()
   if(direction == "right") then
     direction = "left"
   else
@@ -48,7 +48,7 @@ function changeDirection()
   end
 end
 
-function unload()
+local function unload()
   digUp()
   turtle.select(16)
   turtle.placeUp()
@@ -62,7 +62,7 @@ function unload()
   return turtle.getItemCount(15) == 0
 end
 
-function checkFull()
+local function checkFull()
   while turtle.getItemCount(15) > 0 do
     if not unload() then
         print("Ender chest full!")
@@ -71,7 +71,7 @@ function checkFull()
   end
 end
 
-function mineForward(length)
+local function mineForward(length)
   for x = 1, length do
     checkFull()
     if x ~= length then
@@ -79,13 +79,13 @@ function mineForward(length)
     end
     digUp()
     digDown()
-    if x < length then      
+    if x < length then
       move()
     end
   end
 end
 
-function turn()
+local function turn()
   if(direction == "right") then
     turtle.turnRight()
   else
@@ -93,7 +93,7 @@ function turn()
   end
 end
 
-function nextRow()
+local function nextRow()
   turn()
   dig()
   move()
@@ -101,7 +101,7 @@ function nextRow()
   changeDirection()
 end
 
-function nextLevel(last)
+local function nextLevel(last)
   turn()
   turn()
   if not last then
@@ -115,22 +115,22 @@ function nextLevel(last)
   end
 end
 
-function main()
+local function main()
   for x = 1, down do
     for y = 1, across do
       mineForward(forward)
       if y < across then
-        nextRow()  
+        nextRow()
       end
     end
-    
-    
-    last = (x == down-remainder)
+
+
+    local last = (x == down - remainder)
     if(x ~= down) then
         nextLevel(last)
     else
         turtle.down()
-    end    
+    end
   end
 end
 
