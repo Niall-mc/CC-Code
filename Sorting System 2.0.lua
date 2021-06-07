@@ -4,7 +4,7 @@ local controllers = table.pack(peripheral.find("storagedrawers:controller"))
 local chests = table.pack(peripheral.find("ironchest:obsidian_chest"))
 
 local magicLocation = peripheral.getName(chests[1])
-local magicFilter = "nouveau, astral, eidolon"
+local magicFilter = {"nouveau", "astral", "eidolon"}
 
 local immersiveLocation = peripheral.getName(chests[2])
 local immersiveFilter = {"immersive", "tetra"}
@@ -16,7 +16,7 @@ local organicsLocation = peripheral.getName(chests[4])
 local organicItemsFilter = {"petal", "dye", "flower", "mushroom", "head", "tear", "shell", "kelp", "bat_wing",
                             "weed", "clover", "brush", "allium", "bush", "seed", "orchid",
                             "skull", "alex", "web", "raw"}
-                
+
 local woodItemsLocation = peripheral.getName(chests[5])
 local woodItemsFilter = {
     "scaffold", "minecraft:chest", "sign", "fence", "crafting_table",
