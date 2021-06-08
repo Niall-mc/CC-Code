@@ -15,17 +15,18 @@ local machineFilter = {"create", "foregoing", "computercraft", "enderstorage", "
 local organicsLocation = peripheral.getName(chests[4])
 local organicItemsFilter = {"petal", "dye", "flower", "minecraft:flowers", "mushroom", "head", "tear", "shell",
                             "kelp", "bat_wing", "weed", "seed", "skull", "cactus", "alex", "web", "venison",
-                            "neapolitan", "sapling", "vine", "fungus", "stem"}
+                            "neapolitan", "sapling", "vine", "fungus", "stem", "farmers", "minecraft:crops", "forge:seeds", "forge:grains", "forge:crops"}
 
 local woodItemsLocation = peripheral.getName(chests[5])
 local woodItemsFilter = {
-    "scaffold", "minecraft:chest", "sign", "fence", "crafting_table",
-    "storagedrawers", "compactdrawers", "bowl", "carpentry", "boat", "door", "rail", "pattern",
-    "ladder", "plank", "log", "beehive", "item_frame", "stripped"}
+    "scaffold", "sign", "minecraft:wooden_fences", "crafting_table",
+    "drawer", "bowl", "carpentry", "boat", "minecraft:wooden_doors", "rail", "pattern",
+    "ladder", "plank", "minecraft:logs", "beehive", "item_frame", "forge:chests/wooden", "minecraft:wooden_slabs",
+    "minecraft:wooden_stairs", "minecraft:wooden_trapdoors", "minecraft:wooden_buttons", "pestle"}
 
 local toolsArmourLocation = peripheral.getName(chests[6])
 local toolsArmourFilter = {"ironchest", "armor", "armour", "helm", "chestplate", "leggings", "boots", "axe", "sword", "shovel",
-                     "hoe", "hood", "disc", "bucket", "bow", "flint_and_steel", "xercamusic", "saddle"}
+                     "hoe", "hood", "disc", "bucket", "bow", "flint_and_steel", "xercamusic", "saddle", "hat"}
 
 local stoneStuffLocation = peripheral.getName(chests[7])
 local stoneStuffFilter = "stone"
