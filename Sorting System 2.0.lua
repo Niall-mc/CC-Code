@@ -55,11 +55,6 @@ local function moveItem(item, slot)
         end
     end
     for k, v in pairs(locationsMap) do
-        if type(v) == "string" then
-            if itemName:find(v) or tags[v] then
-                return ender.pushItems(k, slot)
-            end
-        end
         if type(v) == "table" then
             for i = 1, #v do
                 if itemName:find(v[i]) or tags[v[i]] then
