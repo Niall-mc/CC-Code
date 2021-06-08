@@ -4,42 +4,45 @@ local controllers = table.pack(peripheral.find("storagedrawers:controller"))
 local chests = table.pack(peripheral.find("ironchest:obsidian_chest"))
 
 local magicLocation = peripheral.getName(chests[1])
-local magicFilter = {"nouveau", "astral", "eidolon"}
+local magicFilter = {"nouveau", "astral", "eidolon", "rune", "tome", "enchanted", "potion", "forbidden", "artifacts"}
 
 local immersiveLocation = peripheral.getName(chests[2])
 local immersiveFilter = {"immersive", "tetra"}
 
 local someMachinesLocation = peripheral.getName(chests[3])
-local machineFilter = {"foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism"}
+local machineFilter = {"create", "foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism"}
 
 local organicsLocation = peripheral.getName(chests[4])
 local organicItemsFilter = {"petal", "dye", "flower", "mushroom", "head", "tear", "shell", "kelp", "bat_wing",
-                            "weed", "clover", "brush", "allium", "bush", "seed", "orchid",
-                            "skull", "alex", "web", "raw"}
+                            "weed", "brush", "bush", "seed", "skull", "cactus", "alex", "web", "venison",
+                            "neapolitan", "sapling", "vine","fungus", "stem"}
 
 local woodItemsLocation = peripheral.getName(chests[5])
 local woodItemsFilter = {
     "scaffold", "minecraft:chest", "sign", "fence", "crafting_table",
-    "storagedrawers", "bowl", "frame"}
+    "storagedrawers", "compactdrawers", "bowl", "carpentry", "boat", "door", "rail", "pattern",
+    "ladder", "plank", "log", "beehive", "item_frame", "stripped"}
 
-local potionsLocation = peripheral.getName(chests[6])
-local potionsFilter = "potions"
+local toolsArmourLocation = peripheral.getName(chests[6])
+local toolsArmourFilter = {"ironchest", "armor", "armour", "helm", "chestplate", "leggings", "boots", "axe", "sword", "shovel",
+                     "hoe", "hood", "disc", "bucket", "bow", "flint_and_steel", "xercamusic", "saddle"}
 
-local forbiddenArtifactsLocation = peripheral.getName(chests[7])
-local forbiddenArtifactsFilter = {"forbidden", "artifacts"}
+local stoneStuffLocation = peripheral.getName(chests[7])
+local stoneStuffFilter = "stone"
 
 local locationsMap = {
     [magicLocation] = magicFilter,
     [immersiveLocation] = immersiveFilter,
     [someMachinesLocation] = machineFilter,
-    [potionsLocation] = potionsFilter,
-    [forbiddenArtifactsLocation] = forbiddenArtifactsFilter,
+    [toolsArmourLocation] = toolsArmourFilter,
+    [stoneStuffLocation] = stoneStuffFilter,
     [woodItemsLocation] = woodItemsFilter,
     [organicsLocation] = organicItemsFilter
 }
 
 local function moveItem(item, slot)
     local itemName = item.name
+    local tags = item.tags
     for i = 1, #controllers do
         local amount = ender.pushItems(peripheral.getName(controllers[i]), slot)
         if amount > 0 then
@@ -52,17 +55,17 @@ local function moveItem(item, slot)
     end
     for k, v in pairs(locationsMap) do
         if type(v) == "string" then
-            if itemName:find(v) then
+            if itemName:find(v) or tags[v] then
                 return ender.pushItems(k, slot)
             end
         end
         if type(v) == "table" then
             for i = 1, #v do
-                if itemName:find(v[i]) then
+                if itemName:find(v[i]) or tags[v[i]] then
                     return ender.pushItems(k, slot)
                 end
             end
-        end   
+        end
     end
     return ender.pushItems(peripheral.getName(chests[8]), slot)
 end
