@@ -13,9 +13,9 @@ local someMachinesLocation = peripheral.getName(chests[3])
 local machineFilter = {"create", "foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism"}
 
 local organicsLocation = peripheral.getName(chests[4])
-local organicItemsFilter = {"petal", "dye", "flower", "mushroom", "head", "tear", "shell", "kelp", "bat_wing",
-                            "weed", "brush", "bush", "seed", "skull", "cactus", "alex", "web", "venison",
-                            "neapolitan", "sapling", "vine","fungus", "stem"}
+local organicItemsFilter = {"petal", "dye", "flower", "minecraft:flowers", "mushroom", "head", "tear", "shell",
+                            "kelp", "bat_wing", "weed", "seed", "skull", "cactus", "alex", "web", "venison",
+                            "neapolitan", "sapling", "vine", "fungus", "stem"}
 
 local woodItemsLocation = peripheral.getName(chests[5])
 local woodItemsFilter = {
