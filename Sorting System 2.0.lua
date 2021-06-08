@@ -24,8 +24,8 @@ local woodItemsFilter = {
     "ladder", "plank", "log", "beehive", "item_frame", "stripped"}
 
 local toolsArmourLocation = peripheral.getName(chests[6])
-local toolsArmourFilter = {"ironchest", "armor", "armour", "helm", "chestplate", "leggings", "boots", "axe", "sword", "shovel",
-                     "hoe", "hood", "disc", "bucket", "bow", "flint_and_steel", "xercamusic", "saddle"}
+local toolsArmourFilter = {"ironchest", "helm", "armor", "forge:tools", "forge:armor", "hood", "disc", "bucket", "bow",
+                        "flint_and_steel", "xercamusic", "saddle", "hoe"}
 
 local stoneStuffLocation = peripheral.getName(chests[7])
 local stoneStuffFilter = "stone"
