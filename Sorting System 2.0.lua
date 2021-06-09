@@ -71,11 +71,9 @@ end
 local function moveItems()
     for i = 1, ender.size() do
         local item = ender.getItemDetail(i)
-        local itemName = item.name
-        local itemCount = item.count
         if item then
-            if moveItem(item, i) < itemCount then
-                print("No space for: " .. itemName)
+            if moveItem(item, i) < item.count then
+                print("No space for: " .. item.name)
             end
         end
     end
