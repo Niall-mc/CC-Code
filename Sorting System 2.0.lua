@@ -11,7 +11,7 @@ local immersiveLocation = peripheral.getName(chests[2])
 local immersiveFilter = {"immersive", "tetra"}
 
 local someMachinesLocation = peripheral.getName(chests[3])
-local machineFilter = {"create", "foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism", "darkutils", "itemcollector"}
+local machineFilter = {"create", "foregoing", "computercraft", "enderstorage", "fluxnetworks", "mekanism", "refinedstorage", "darkutils", "itemcollector"}
 
 local organicsLocation = peripheral.getName(chests[4])
 local organicItemsFilter = {"petal", "dye", "flower", "minecraft:flowers", "mushroom", "head", "tear", "shell",
@@ -51,7 +51,7 @@ local function moveItem(item, slot)
     for i = 1, #controllers do
         local amount = ender.pushItems(peripheral.getName(controllers[i]), slot)
         if amount > 0 then
-            if amount == itemCount then
+            if amount >= itemCount then
                 return itemCount
             end
             print("Sending " .. itemName .. " to overflow.")
