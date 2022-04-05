@@ -1,3 +1,4 @@
+local ButtonAPI = require "ButtonAPI"
 local modem = peripheral.find("modem")
 local REPLY = 10
 modem.open(REPLY)
@@ -7,15 +8,15 @@ local windowWidth = windowSize[1]
 local windowHeight = windowSize[2]
 
 local users = {
-    "Niall" = colours.green,
-    "Fusion" = colours.blue,
-    "dacilo" = colours.red,
-    "KJ" = colours.orange
+    ["Niall"] = colours.green,
+    ["Fusion"] = colours.blue,
+    ["dacilo"] = colours.red,
+    ["KJ"] = colours.orange
 }
 
 local destinations = {
-    "Dac Corp" = 20,
-    "KJ Corp" = 30
+    ["Dac Corp"] = 20,
+    ["KJ Corp"] = 30
 }
 
 local userButtons = {}
@@ -55,7 +56,7 @@ end
 
 local currentUserButton = {}
 local currentDestinationButton = {}
-local function setCurrentButton(theUserButton, theDestinationButton
+local function setCurrentButton(theUserButton, theDestinationButton)
     if theUserButton then
         currentUserButton:update(colours.red, nil)
         theUserButton:update(colours.green, nil)
@@ -68,6 +69,15 @@ local function setCurrentButton(theUserButton, theDestinationButton
     end
 end
 
+local function drawUI(self)
+    if self then setCurrentButton(self) end
+    term.clear()
+    ButtonAPI.drawButtons(userButtons)
+    ButtonAPI.drawButtons(destinationButtons)
+    tpButton:draw()
+end
+
+drawUI()
 -- Begin event loop
 while true do
     local eventData = {os.pullEvent()}
