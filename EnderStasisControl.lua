@@ -14,7 +14,8 @@ local users = {
 local locations = {
     {"FusCorp", 10},
     {"DacCorp", 20},
-    {"KJCorp", 30}
+    {"KJCorp", 30},
+    {"Stronghold", 40}
 }
 
 local userButtons = {}
@@ -56,9 +57,9 @@ local function teleport()
 end
 
 local function receiveTeleport(user)
-    rs.setBundledOutput("bottom", user)
+    rs.setBundledOutput("left", user)
     sleep(1)
-    rs.setBundledOutput("bottom", colours.black)
+    rs.setBundledOutput("left", colours.black)
 end
 
 local function createButtons()
@@ -68,10 +69,10 @@ local function createButtons()
         table.insert(userButtons, button)
         y = y + 3
     end
-    local x = windowWidth - 9
     y = 2
     for i = 1, #locations do
-        local button = ButtonAPI.createButton(x, y, nil, nil, locations[i][1], colours.red, setLocation)
+        local text = locations[i][1]
+        local button = ButtonAPI.createButton(windowWidth - (#text + 2), y, nil, nil, text, colours.red, setLocation)
         table.insert(locationButtons, button)
         y = y + 3
     end
@@ -111,9 +112,3 @@ while true do
         receiveTeleport(eventData[5])
     end
 end
-
-
-
-
-
-
