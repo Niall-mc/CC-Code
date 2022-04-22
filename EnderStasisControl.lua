@@ -32,7 +32,7 @@ local buttonEvents = {}
 
 local function setCurrentButton(userButton, locButton)
     if userButton then
-        if currentUserButton then currentLocationButton(currentUserButton, colours.red, nil) end
+        if currentUserButton then ButtonAPI.updateButton(currentUserButton, colours.red, nil) end
         ButtonAPI.updateButton(userButton, colours.green, nil)
         currentUserButton = userButton
     end
@@ -105,5 +105,9 @@ createButtons()
 while true do
     parallel.waitForAny(table.unpack(buttonEvents))
 end
+
+
+
+
 
 
