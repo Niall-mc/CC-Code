@@ -1,28 +1,3 @@
-local function draw(self)
-    term.setCursorPos(self.x, self.y)
-    paintutils.drawFilledBox(self.x, self.y, (self.x + self.width) - 1, (self.y + self.height) - 1, self.colour)
-    term.setCursorPos(self.x+1, self.y+1)
-    term.setTextColor(colours.black)
-    term.write(self.text)
-    term.setBackgroundColor(colours.black)
-end
-
-local function drawButtons(buttons)
-    for _, button in pairs(buttons) do
-        button:draw()
-    end
-end
-
-local function update(self, colour, text) 
-    self.colour = colour or self.colour
-    self.text = text or self.text
-    self:draw()
-end
-
-local function clicked(self, x, y)
-    return x >= self.x and x < (self.x + self.width) and y >= self.y and y < (self.y + self.height)
-end
-
 local function createButton(x, y, width, height, text, colour, onClickMethod)
     return {
         x = x,
@@ -31,14 +6,47 @@ local function createButton(x, y, width, height, text, colour, onClickMethod)
         height = height or 2,
         colour = colour,
         text = text,
-        onClickMethod = onClickMethod,
-        draw = draw,
-        update = update,
-        clicked = clicked
+        onClickMethod = onClickMethod
     }
+end
+
+local function drawButton(button)
+    term.setCursorPos(button.x, button.y)
+    paintutils.drawFilledBox(button.x, button.y, (button.x + button.width) - 1, (button.y + button.height) - 1, button.colour)
+    term.setCursorPos(button.x+1, button.y+1)
+    term.setTextColor(colours.black)
+    term.write(button.text)
+    term.setBackgroundColor(colours.black)
+end
+
+local function drawButtons(buttons)
+    for _, button in pairs(buttons) do
+        drawButton(button)
+    end
+end
+
+local function updateButton(button, colour, text)
+    button.colour = colour or button.colour
+    button.text = text or button.text
+    drawButton(button)
+end
+
+local function wait_for_click(button)
+    return function()
+        while true do
+            local _, _, xLoc, yLoc = os.pullEvent("mouse_click")
+            if xLoc >= button.x and xLoc < (button.x + button.width) and yLoc >= button.y and yLoc < (button.y + button.height) then
+                button:onClickMethod()
+            end
+        end
+    end
 end
 
 return {
     createButton = createButton,
-    drawButtons = drawButtons
+    drawButton = drawButton,
+    drawButtons = drawButtons,
+    updateButton = updateButton,
+    wait_for_click = wait_for_click
 }
+
