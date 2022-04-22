@@ -1,6 +1,8 @@
 local ButtonAPI = require "ButtonAPI"
 local modem = peripheral.find("modem")
-modem.open(20)
+local channel = 10
+local cableSide = "right"
+modem.open(channel)
 local windowWidth, windowHeight = term.getSize()
 
 local users = {
@@ -57,14 +59,17 @@ end
 
 local function teleport()
     if theUser and theLocation then
-        modem.transmit(theLocation, 10, theUser)
+        modem.transmit(theLocation, channel, theUser)
     end
 end
 
-local function receiveTeleport(user)
-    rs.setBundledOutput("back", user)
-    sleep(1)
-    rs.setBundledOutput("back", colours.black)
+local function receiveTeleport()
+    while true do
+        local _, _, _, _, user = os.pullEvent("modem_message")
+        rs.setBundledOutput(cableSide, user)
+        sleep(1)
+        rs.setBundledOutput(cableSide, colours.black)
+    end
 end
 
 local function createButtonsFromTable(xLoc, inputTable, outputTable, buttonMethod)
@@ -85,6 +90,9 @@ local function createButtons()
     local tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.red, teleport)
     table.insert(buttonEvents, ButtonAPI.wait_for_click(tpButton))
 
+    -- Add incomming teleport event
+    table.insert(buttonEvents, receiveTeleport)
+
     -- Draw the buttons
     ButtonAPI.drawButtons(userButtons)
     ButtonAPI.drawButtons(locationButtons)
@@ -96,12 +104,6 @@ createButtons()
 
 while true do
     parallel.waitForAny(table.unpack(buttonEvents))
-
-    local eventData = {os.pullEvent()}
-    local eventName = eventData[1]
-    if eventName == "modem_message" then
-        receiveTeleport(eventData[5])
-    end
 end
 
 
