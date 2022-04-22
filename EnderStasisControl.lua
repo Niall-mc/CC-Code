@@ -1,9 +1,7 @@
 local ButtonAPI = require "ButtonAPI"
 local modem = peripheral.find("modem")
-modem.open(10)
-local windowSize = {term.getSize()}
-local windowWidth = windowSize[1]
-local windowHeight = windowSize[2]
+modem.open(20)
+local windowWidth, windowHeight = term.getSize()
 
 local users = {
     {"Niall", colours.green},
@@ -11,6 +9,7 @@ local users = {
     {"Dacilo", colours.blue},
     {"KJ", colours.orange}
 }
+
 local locations = {
     {"FusCorp", 10},
     {"DacCorp", 20},
@@ -20,34 +19,40 @@ local locations = {
 
 local userButtons = {}
 local locationButtons = {}
-local tpButton = {}
+
 local currentUserButton = nil
 local currentLocationButton = nil
 
 local theUser = nil
 local theLocation = nil
 
+local buttonEvents = {}
+
 local function setCurrentButton(userButton, locButton)
     if userButton then
-        if currentUserButton then currentUserButton:update(colours.red, nil) end
-        userButton:update(colours.green, nil)
+        if currentUserButton then currentLocationButton(currentUserButton, colours.red, nil) end
+        ButtonAPI.updateButton(userButton, colours.green, nil)
         currentUserButton = userButton
     end
     if locButton then
-        if currentLocationButton then currentLocationButton:update(colours.red, nil) end
-        locButton:update(colours.green, nil)
+        if currentLocationButton then ButtonAPI.updateButton(currentLocationButton, colours.red, nil) end
+        ButtonAPI.updateButton(locButton, colours.green, nil)
         currentLocationButton = locButton
     end
 end
 
-local function setUser(self, user)
-    theUser = math.floor(user)
-    setCurrentButton(self, nil)
+local function setUser(user)
+    return function(self)
+        theUser = math.floor(user)
+        setCurrentButton(self, nil)
+    end
 end
 
-local function setLocation(self, location)
-    theLocation = math.floor(location)
-    setCurrentButton(nil, self)
+local function setLocation(location)
+    return function(self)
+        theLocation = math.floor(location)
+        setCurrentButton(nil, self)
+    end
 end
 
 local function teleport()
@@ -57,58 +62,46 @@ local function teleport()
 end
 
 local function receiveTeleport(user)
-    rs.setBundledOutput("left", user)
+    rs.setBundledOutput("back", user)
     sleep(1)
-    rs.setBundledOutput("left", colours.black)
+    rs.setBundledOutput("back", colours.black)
+end
+
+local function createButtonsFromTable(xLoc, inputTable, outputTable, buttonMethod)
+    local y = 2
+    for i = 1, #inputTable do
+        local item = inputTable[i]
+        local button = ButtonAPI.createButton(xLoc, y, nil, nil, item[1], colours.red, buttonMethod(item[2]))
+        table.insert(outputTable, button)
+        table.insert(buttonEvents, ButtonAPI.wait_for_click(button))
+        y = y + 3
+    end
 end
 
 local function createButtons()
-    local y = 2
-    for i = 1, #users do
-        local button = ButtonAPI.createButton(2, y, nil, nil, users[i][1], colours.red, setUser)
-        table.insert(userButtons, button)
-        y = y + 3
-    end
-    y = 2
-    for i = 1, #locations do
-        local text = locations[i][1]
-        local button = ButtonAPI.createButton(windowWidth - (#text + 2), y, nil, nil, text, colours.red, setLocation)
-        table.insert(locationButtons, button)
-        y = y + 3
-    end
-    tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.red, teleport)
-    tpButton:draw()
+    -- Create the buttons
+    createButtonsFromTable(2, users, userButtons, setUser)
+    createButtonsFromTable(windowWidth - 12, locations, locationButtons, setLocation)
+    local tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.red, teleport)
+    table.insert(buttonEvents, ButtonAPI.wait_for_click(tpButton))
+
+    -- Draw the buttons
     ButtonAPI.drawButtons(userButtons)
     ButtonAPI.drawButtons(locationButtons)
+    ButtonAPI.drawButton(tpButton)
 end
 
 term.clear()
 createButtons()
 
 while true do
+    parallel.waitForAny(table.unpack(buttonEvents))
+
     local eventData = {os.pullEvent()}
     local eventName = eventData[1]
-    if eventName == "mouse_click" then
-        for a = 1, #userButtons do
-            local theButton = userButtons[a]
-            if theButton:clicked(eventData[3], eventData[4]) then
-                theButton:onClickMethod(users[a][2])
-                break
-            end
-        end
-
-        for a = 1, #locationButtons do
-            local theButton = locationButtons[a]
-            if theButton:clicked(eventData[3], eventData[4]) then
-                theButton:onClickMethod(locations[a][2])
-                break
-            end
-        end
-
-        if tpButton:clicked(eventData[3], eventData[4]) then
-            tpButton:onClickMethod()
-        end
-    elseif eventName == "modem_message" then
+    if eventName == "modem_message" then
         receiveTeleport(eventData[5])
     end
 end
+
+
