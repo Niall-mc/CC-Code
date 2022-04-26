@@ -1,7 +1,5 @@
-local api = {}
-
-local function api.createButton(x, y, width, height, text, colour, onClickMethod)
-    local button = {
+local function createButton(x, y, width, height, text, colour, onClickMethod)
+    return {
         x = x,
         y = y,
         width = width or #text + 2,
@@ -10,10 +8,9 @@ local function api.createButton(x, y, width, height, text, colour, onClickMethod
         text = text,
         onClickMethod = onClickMethod
     }
-    return button
 end
 
-local function api.drawButton(button)
+local function drawButton(button)
     term.setCursorPos(button.x, button.y)
     paintutils.drawFilledBox(button.x, button.y, (button.x + button.width) - 1, (button.y + button.height) - 1, button.colour)
     term.setCursorPos(button.x+1, button.y+1)
@@ -22,13 +19,13 @@ local function api.drawButton(button)
     term.setBackgroundColor(colours.black)
 end
 
-local function api.drawButtons(buttons)
+local function drawButtons(buttons)
     for _, button in pairs(buttons) do
         drawButton(button)
     end
 end
 
-local function api.updateButton(button, colour, text)
+local function updateButton(button, colour, text)
     button.colour = colour or button.colour
     button.text = text or button.text
     drawButton(button)
@@ -45,4 +42,10 @@ local function wait_for_click(button)
     end
 end
 
-return api
+return {
+    createButton = createButton,
+    drawButton = drawButton,
+    drawButtons = drawButtons,
+    updateButton = updateButton,
+    wait_for_click = wait_for_click
+}
