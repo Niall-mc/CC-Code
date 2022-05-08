@@ -99,12 +99,10 @@ local function nextRow()
 end
 
 local function main()
-  for x = 1, down do
-    for y = 1, across do
-      mineForward(forward)
-      if y < across then
-        nextRow()
-      end
+  for y = 1, across do
+    mineForward(forward)
+    if y < across then
+      nextRow()
     end
   end
 end
