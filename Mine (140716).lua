@@ -8,9 +8,33 @@ local down = math.ceil(actualDown / 3)
 
 local direction = tArgs[4]
 
+local function readValue(fileName)
+  if fs.exists(fileName) then
+    local file = fs.open(fileName, "r")
+    local value = file.readLine()
+    file.close()
+    return value
+  end
+
+  return 1
+end
+
+local function writeValue(fileName, value)
+  local file = fs.open(fileName, "w")
+  file.writeLine(tostring(value))
+  file.close()
+end
+
+local cForward, cAcross, cDown = tonumber(readValue("mine.forward")), tonumber(readValue("mine.across")), tonumber(readValue("mine.down"))
+
+if fs.exists("mine.direction") then
+  direction = readValue("mine.direction")
+end
+
+
 local function dig()
   while turtle.detect() do
-      turtle.dig()
+    turtle.dig()
   end
 end
 
@@ -41,11 +65,12 @@ local function moveDown(amount)
 end
 
 local function changeDirection()
-  if(direction == "right") then
+  if direction == "right" then
     direction = "left"
   else
     direction = "right"
   end
+  writeValue("mine.direction", direction)
 end
 
 local function unload()
@@ -54,25 +79,29 @@ local function unload()
   turtle.placeUp()
   for i = 1, 15 do
     turtle.select(i)
-    turtle.dropUp()
+    local count = 0
+    while turtle.getItemCount(i) > 0 do
+      turtle.dropUp()
+	if count > 0 then
+    print("Ender chest full!")
+    sleep(5)
+	end
+	count = 1
+    end
   end
   turtle.select(16)
   turtle.digUp()
   turtle.select(1)
-  return turtle.getItemCount(15) == 0
 end
 
 local function checkFull()
-  while turtle.getItemCount(15) > 0 do
-    if not unload() then
-        print("Ender chest full!")
-        sleep(10)
-    end
+  if turtle.getItemCount(15) > 0 then
+    unload()
   end
 end
 
 local function mineForward(length)
-  for x = 1, length do
+  for x = cForward, length do
     checkFull()
     if x ~= length then
       dig()
@@ -82,11 +111,12 @@ local function mineForward(length)
     if x < length then
       move()
     end
+    writeValue("mine.forward", x)
   end
 end
 
 local function turn()
-  if(direction == "right") then
+  if direction == "right" then
     turtle.turnRight()
   else
     turtle.turnLeft()
@@ -107,7 +137,7 @@ local function nextLevel(last)
   if not last then
     moveDown(3)
   else
-      if(remainder == 2) then
+      if remainder == 2 then
         moveDown(2)
       else
         moveDown(1)
@@ -116,21 +146,23 @@ local function nextLevel(last)
 end
 
 local function main()
-  for x = 1, down do
-    for y = 1, across do
+  for x = cDown, down do
+    for y = cAcross, across do
       mineForward(forward)
       if y < across then
         nextRow()
       end
+      writeValue("mine.across", y)
     end
 
 
     local last = (x == down - remainder)
-    if(x ~= down) then
+    if x ~= down then
         nextLevel(last)
     else
         turtle.down()
     end
+    writeValue("mine.down", x)
   end
 end
 
