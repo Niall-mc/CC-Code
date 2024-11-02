@@ -1,28 +1,39 @@
 local ButtonAPI = require "ButtonAPI"
-local modem = peripheral.find("modem")
+local modem = peripheral.wrap("top")
 local channel = 10
-local cableSide = "right"
 modem.open(channel)
 local windowWidth, windowHeight = term.getSize()
+local playerDetector = peripheral.find("playerDetector")
+local integrators = table.pack(peripheral.find("redstoneIntegrator"))
+
+for i = 1, #integrators do integrators[i].setOutput("back", true) end
 
 local users = {
-    {"Niall", colours.green},
-    {"Fusion", colours.red},
-    {"Dacilo", colours.blue},
-    {"KJ", colours.orange}
+    FusionGB = integrators[1],
+    Dacilo = integrators[2],
+    notaspy0_0 = integrators[3],
+    JTG_TheGreat = integrators[4],
+    beccapboop = integrators[5],
+    DGibsy = integrators[6],
 }
+
+for k, v in pairs(users) do
+    term.native().write(k .. " : " .. peripheral.getName(v) .. "\n")
+    local x, y = term.native().getCursorPos()
+    term.native().setCursorPos(1, y + 1)
+end
 
 local locations = {
-    {"FusCorp", 10},
-    {"DacCorp", 20},
-    {"KJCorp", 30},
-    {"Stronghold", 40}
+    Niall = 10,
+    Fus = 20,
+    Dac = 30,
+    Stepho = 40,
+    ["Jake & Becca"] = 50,
+    Gibs = 60,
+    Stronghold = 70
 }
 
-local userButtons = {}
 local locationButtons = {}
-
-local currentUserButton = nil
 local currentLocationButton = nil
 
 local theUser = nil
@@ -30,12 +41,7 @@ local theLocation = nil
 
 local buttonEvents = {}
 
-local function setCurrentButton(userButton, locButton)
-    if userButton then
-        if currentUserButton then ButtonAPI.updateButton(currentUserButton, colours.red, nil) end
-        ButtonAPI.updateButton(userButton, colours.green, nil)
-        currentUserButton = userButton
-    end
+local function setCurrentButton(locButton)
     if locButton then
         if currentLocationButton then ButtonAPI.updateButton(currentLocationButton, colours.red, nil) end
         ButtonAPI.updateButton(locButton, colours.green, nil)
@@ -43,50 +49,69 @@ local function setCurrentButton(userButton, locButton)
     end
 end
 
-local function setUser(user)
-    return function(self)
-        theUser = math.floor(user)
-        setCurrentButton(self, nil)
-    end
-end
-
 local function setLocation(location)
     return function(self)
         theLocation = math.floor(location)
-        setCurrentButton(nil, self)
+        setCurrentButton(self)
     end
 end
 
 local function teleport()
-    if theUser and theLocation then
-        modem.transmit(theLocation, channel, theUser)
+    local players = playerDetector.getPlayersInRange(5)
+    local player
+    if players then
+        player = players[1]
+    else
+        return
+    end
+
+    term.native().write(player)
+    
+    if theLocation then
+        modem.transmit(theLocation, channel, player)
     end
 end
 
 local function receiveTeleport()
     while true do
         local _, _, _, _, user = os.pullEvent("modem_message")
-        rs.setBundledOutput(cableSide, user)
-        sleep(1)
-        rs.setBundledOutput(cableSide, colours.black)
+        local integrator = users[user]
+        if integrator then
+            -- top = dropper for pearl
+            -- back = trapdoor to smack pearl
+            integrator.setOutput("back", false)
+            integrator.setOutput("top", true)
+            sleep(1)
+            integrator.setOutput("top", false)
+            sleep(2)
+            integrator.setOutput("back", true)
+        end
     end
 end
 
-local function createButtonsFromTable(xLoc, inputTable, outputTable, buttonMethod)
-    local y = 2
-    for i = 1, #inputTable do
-        local item = inputTable[i]
-        local button = ButtonAPI.createButton(xLoc, y, nil, nil, item[1], colours.red, buttonMethod(item[2]))
-        table.insert(outputTable, button)
+local function createButtonsFromTable(xLoc, inputTable, buttonMethod)
+    local yLoc = 2
+    if not xLoc then xLoc = 2 end
+
+    local buttons = {}
+    for key, value in pairs(inputTable) do
+        local item = key
+        local button = ButtonAPI.createButton(xLoc, yLoc, nil, nil, key, colours.red, buttonMethod(value))
+        table.insert(buttons, button)
         table.insert(buttonEvents, ButtonAPI.wait_for_click(button))
-        y = y + 3
+        yLoc = yLoc + 3
+        if yLoc > 13 then
+            yLoc = 2
+            xLoc = xLoc + 13
+        end
     end
+
+    return buttons
 end
 
 local function createButtons()
     -- Create the buttons
-    createButtonsFromTable(2, users, userButtons, setUser)
-    createButtonsFromTable(windowWidth - 12, locations, locationButtons, setLocation)
+    locationButtons = createButtonsFromTable(nil, locations, setLocation)
     local tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.red, teleport)
     table.insert(buttonEvents, ButtonAPI.wait_for_click(tpButton))
 
@@ -94,7 +119,6 @@ local function createButtons()
     table.insert(buttonEvents, receiveTeleport)
 
     -- Draw the buttons
-    ButtonAPI.drawButtons(userButtons)
     ButtonAPI.drawButtons(locationButtons)
     ButtonAPI.drawButton(tpButton)
 end
@@ -105,9 +129,3 @@ createButtons()
 while true do
     parallel.waitForAny(table.unpack(buttonEvents))
 end
-
-
-
-
-
-
