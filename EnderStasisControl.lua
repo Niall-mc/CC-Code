@@ -19,7 +19,7 @@ local users = {
     Dacilo = integrators[2],
     notaspy0_0 = integrators[1],
     JTGTheGreat4798 = integrators[4],
-    beccapboop10 = integrators[5],
+    beccaboop10 = integrators[5],
     DGibsy = integrators[6],
     NiallDoherty = integrators[7],
 }
@@ -32,7 +32,7 @@ end
 
 local locations = {
     Niall = 10,
-    Fus = 20,
+    --Fus = 20,
     Dac = 30,
     Stepho = 40,
     ["Jake & Becca"] = 50,
@@ -71,8 +71,6 @@ local function teleport()
     else
         return
     end
-
-    term.native().write(player)
     
     if theLocation then
         modem.transmit(theLocation, channel, player)
@@ -81,7 +79,8 @@ end
 
 local function receiveTeleport()
     while true do
-        local _, _, _, _, user = os.pullEvent("modem_message")
+        local _, _, c, _, user = os.pullEvent("modem_message")
+        if c ~= channel then return end
         local integrator = users[user]
         if integrator then
             -- top = dropper for pearl
