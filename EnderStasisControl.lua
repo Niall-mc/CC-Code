@@ -1,20 +1,28 @@
 local ButtonAPI = require "ButtonAPI"
 local modem = peripheral.wrap("top")
-local channel = 10
+local channel = 20
 modem.open(channel)
-local windowWidth, windowHeight = term.getSize()
 local playerDetector = peripheral.find("playerDetector")
 local integrators = table.pack(peripheral.find("redstoneIntegrator"))
+local monitor = peripheral.wrap("back")
+term.redirect(monitor)
+local windowWidth, windowHeight = term.getSize()
+
+
+monitor.setPaletteColour(colours.red, 0xCD7F32)
+monitor.setPaletteColour(colours.green, 0xF2B233)
+monitor.setPaletteColour(colours.orange, 0x7FCC19)
 
 for i = 1, #integrators do integrators[i].setOutput("back", true) end
 
 local users = {
-    FusionGB = integrators[1],
+    FusionGB = integrators[3],
     Dacilo = integrators[2],
-    notaspy0_0 = integrators[3],
-    JTG_TheGreat = integrators[4],
-    beccapboop = integrators[5],
+    notaspy0_0 = integrators[1],
+    JTGTheGreat4798 = integrators[4],
+    beccapboop10 = integrators[5],
     DGibsy = integrators[6],
+    NiallDoherty = integrators[7],
 }
 
 for k, v in pairs(users) do
@@ -112,7 +120,7 @@ end
 local function createButtons()
     -- Create the buttons
     locationButtons = createButtonsFromTable(nil, locations, setLocation)
-    local tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.red, teleport)
+    local tpButton = ButtonAPI.createButton(windowWidth / 2 - 4, windowHeight - 3, nil, nil, "Teleport", colours.orange, teleport)
     table.insert(buttonEvents, ButtonAPI.wait_for_click(tpButton))
 
     -- Add incomming teleport event
