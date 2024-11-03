@@ -34,7 +34,7 @@ end
 local function wait_for_click(button)
     return function()
         while true do
-            local _, _, xLoc, yLoc = os.pullEvent("mouse_click")
+            local _, _, xLoc, yLoc = os.pullEvent({"mouse_click", "monitor_touch"})
             if xLoc >= button.x and xLoc < (button.x + button.width) and yLoc >= button.y and yLoc < (button.y + button.height) then
                 button:onClickMethod()
             end
