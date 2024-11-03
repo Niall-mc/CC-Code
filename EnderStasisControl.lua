@@ -4,10 +4,11 @@ local channel = 20
 modem.open(channel)
 local playerDetector = peripheral.find("playerDetector")
 local integrators = table.pack(peripheral.find("redstoneIntegrator"))
+local enderChest = peripheral.find("enderstorage:ender_chest")
+local droppers = table.pack(peripheral.find("minecraft:dropper"))
 local monitor = peripheral.wrap("back")
 term.redirect(monitor)
 local windowWidth, windowHeight = term.getSize()
-
 
 monitor.setPaletteColour(colours.red, 0xCD7F32)
 monitor.setPaletteColour(colours.green, 0xF2B233)
@@ -131,9 +132,17 @@ local function createButtons()
     ButtonAPI.drawButton(tpButton)
 end
 
+local function fillDroppers()
+    for i = 1, #droppers do
+        local dropper = droppers[i]
+        enderChest.pushItems(peripheral.getName(dropper), 1)
+    end
+    sleep(5)
+end
+
 term.clear()
 createButtons()
 
 while true do
-    parallel.waitForAny(table.unpack(buttonEvents))
+    parallel.waitForAny(table.unpack(buttonEvents), fillDroppers)
 end
